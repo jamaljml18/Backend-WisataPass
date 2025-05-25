@@ -1,0 +1,44 @@
+[
+  {
+    "userID": "user1",
+    "itemID": "Bali",
+    "rating": 4,
+    "harga": "Rp 2.500.000",
+    "deskripsi": "Pulau tropis dengan pantai indah dan budaya yang kaya."
+  },
+  {
+    "userID": "user1",
+    "itemID": "Lombok",
+    "rating": 5,
+    "harga": "Rp 2.200.000",
+    "deskripsi": "Destinasi menawan dengan Gunung Rinjani dan pantai perawan."
+  },
+  {
+    "userID": "user2",
+    "itemID": "Bali",
+    "rating": 5,
+    "harga": "Rp 2.500.000",
+    "deskripsi": "Pulau tropis dengan pantai indah dan budaya yang kaya."
+  },
+  {
+    "userID": "user2",
+    "itemID": "Bandung",
+    "rating": 3,
+    "harga": "Rp 1.500.000",
+    "deskripsi": "Kota sejuk dengan kuliner unik dan belanja fashion lokal."
+  },
+  {
+    "userID": "user3",
+    "itemID": "Bandung",
+    "rating": 4,
+    "harga": "Rp 1.500.000",
+    "deskripsi": "Kota sejuk dengan kuliner unik dan belanja fashion lokal."
+  },
+  {
+    "userID": "user3",
+    "itemID": "Lombok",
+    "rating": 2,
+    "harga": "Rp 2.200.000",
+    "deskripsi": "Destinasi menawan dengan Gunung Rinjani dan pantai perawan."
+  }
+]
