@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Input Generator</title>
+    <script>
+      async function generateText() {
+        // console.log('Fungsi generateText dipanggil');
+        const prompt = document.getElementById('promptInput').value;
+
+        try {
+          const response = await fetch('http://localhost:5000/test', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: prompt }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Terjadi kesalahan saat mengambil data');
+          }
+
+          const data = await response.json();
+          console.log('Data yang diterima:', data); // Debug log
+
+          if (data && data.result && data.result.trim() !== '') {
+            // console.log('Menampilkan hasil:', data.result); // Debug log
+            document.getElementById('result').innerText = data.result;
+          } else {
+            document.getElementById('result').innerText =
+              'Tidak ada hasil yang diterima dari API.';
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          document.getElementById('result').innerText =
+            'Terjadi kesalahan saat mengambil data.';
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Text Generator</h1>
+    <textarea
+      id="promptInput"
+      placeholder="Masukkan prompt Anda di sini..."
+    ></textarea>
+    <br />
+    <button onclick="generateText()">Generate</button>
+
+    <h2>Hasil:</h2>
+    <pre id="result">Menunggu hasil...</pre>
+  </body>
+</html>
