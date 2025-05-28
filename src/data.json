@@ -2,6 +2,7 @@
   {
     "userID": "user1",
     "itemID": "Bali",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_bali_test_cx6evw",
     "rating": 4,
     "harga": "Rp 2.500.000",
     "deskripsi": "Pulau tropis dengan pantai indah dan budaya yang kaya."
@@ -9,6 +10,7 @@
   {
     "userID": "user1",
     "itemID": "Lombok",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_lombok_test_pfwoa7",
     "rating": 5,
     "harga": "Rp 2.200.000",
     "deskripsi": "Destinasi menawan dengan Gunung Rinjani dan pantai perawan."
@@ -16,6 +18,7 @@
   {
     "userID": "user2",
     "itemID": "Bali",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_bali_test_cx6evw",
     "rating": 5,
     "harga": "Rp 2.500.000",
     "deskripsi": "Pulau tropis dengan pantai indah dan budaya yang kaya."
@@ -23,6 +26,7 @@
   {
     "userID": "user2",
     "itemID": "Bandung",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_bandung_test_i6bemw",
     "rating": 3,
     "harga": "Rp 1.500.000",
     "deskripsi": "Kota sejuk dengan kuliner unik dan belanja fashion lokal."
@@ -30,6 +34,7 @@
   {
     "userID": "user3",
     "itemID": "Bandung",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_bandung_test_i6bemw",
     "rating": 4,
     "harga": "Rp 1.500.000",
     "deskripsi": "Kota sejuk dengan kuliner unik dan belanja fashion lokal."
@@ -37,8 +42,25 @@
   {
     "userID": "user3",
     "itemID": "Lombok",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_lombok_test_pfwoa7",
     "rating": 2,
     "harga": "Rp 2.200.000",
     "deskripsi": "Destinasi menawan dengan Gunung Rinjani dan pantai perawan."
+  },
+  {
+    "userID": "user4",
+    "itemID": "Yogyakarta",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_jogja_test_me2j29",
+    "rating": 5,
+    "harga": "Rp 200.000",
+    "deskripsi": "Kota budaya dengan warisan sejarah seperti Candi Borobudur, Keraton, dan nuansa tradisional yang kuat."
+  },
+  {
+    "userID": "user5",
+    "itemID": "Raja Ampat",
+    "lokasi": "https://res.cloudinary.com/diihtbw9h/image/upload/v1/destinasi_raja_ampat_test_zt7nid",
+    "rating": 2,
+    "harga": "Rp 200.000",
+    "deskripsi": "Surga tropis dengan keindahan bawah laut terbaik di dunia dan pulau-pulau eksotis yang menakjubkan."
   }
 ]
