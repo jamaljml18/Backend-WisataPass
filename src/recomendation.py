@@ -43,6 +43,7 @@ def rekomendasi(request_data: RekomendasiRequest):
             info = next((d for d in data_loaded if d["itemID"] == item), {})
             rekomendasi.append({
                 "item": item,
+                "lokasi": info.get("lokasi", "-"),
                 "rating": round(pred.est, 2),
                 "harga": info.get("harga", "-"),
                 "deskripsi": info.get("deskripsi", "-")
@@ -54,6 +55,7 @@ def rekomendasi(request_data: RekomendasiRequest):
             info = next((d for d in data_loaded if d["itemID"] == item), {})
             rekomendasi.append({
                 "item": item,
+                "lokasi": info.get("lokasi", "-"),
                 "rating": round(pred.est, 2),
                 "harga": info.get("harga", "-"),
                 "deskripsi": info.get("deskripsi", "-")
