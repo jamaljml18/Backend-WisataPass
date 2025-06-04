@@ -20,7 +20,18 @@ export default [
     },
     rules: {
       'prettier/prettier': ['error', { singleQuote: true }],
+      camelcase: [
+        'error',
+        {
+          allow: [
+            'cloud_name',
+            'api_key',
+            'api_secret',
+            'favorite_place',
+            'user_id',
+          ],
+        },
+      ],
     },
   },
 ];
-
