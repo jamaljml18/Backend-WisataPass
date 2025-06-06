@@ -47,7 +47,9 @@
         message.textContent = data.message;
 
         if (res.ok && data.userId) {
-          sessionStorage.setItem('userId', data.userId);
+          // sessionStorage.setItem('userId', data.userId);
+          sessionStorage.setItem('authTokenNama', data.token_nama);
+          sessionStorage.setItem('authTokenId', data.token_id);
           window.location.href = 'destination.html';
         }
       });

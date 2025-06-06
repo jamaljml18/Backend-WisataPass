@@ -1,0 +1,134 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Section container */
+section {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+section:hover {
+  transform: translateY(-2px);
+}
+
+/* Judul utama */
+h2 {
+  text-align: center;
+  color: #0066b2;
+  margin-bottom: 25px;
+  font-size: 26px;
+}
+
+/* Judul sub */
+h3 {
+  color: #444;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+/* Kontainer hasil favorit */
+#favoriteOutput {
+  margin-top: 20px;
+}
+
+/* Tombol */
+button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 5px;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.03);
+}
+
+/* Item favorit */
+.favorite-item {
+  background-color: #eef4fb;
+  border-left: 5px solid #007bff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+
+.favorite-item:hover {
+  background-color: #e3efff;
+}
+
+/* Nama tempat */
+.favorite-item h4 {
+  margin-top: 0;
+  color: #003d73;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Gambar tempat */
+.favorite-item img {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  border-radius: 12px;
+  margin: 10px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+/* Teks detail tempat */
+.favorite-item p {
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+.favorite-item strong {
+  color: #0056b3;
+}
+
+/* Garis pemisah antar item */
+.favorite-item hr {
+  margin-top: 20px;
+  border: none;
+  border-top: 1px solid #d9e2ec;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  section {
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .favorite-item h4 {
+    font-size: 18px;
+  }
+
+  .favorite-item p {
+    font-size: 15px;
+  }
+}
