@@ -13,7 +13,7 @@ Method:
  POST
 Request Body (JSON):
   {
-    "user_id": "3",            // Didapat dari session storage setelah user login
+    "user_id": "xnkxvohodhf",            // Didapat dari session storage setelah user login
     "favorite_place": "Monumen Nasional"  // Diambil dari lokasi favorit yang diklik di Section 2
   }
 Response: Daftar rekomendasi destinasi untuk user.
@@ -69,6 +69,86 @@ Request Body (JSON)
     "Password2": "Sofyan123"    
   }
 
+[5] /auth 
+URL:
+ /auth
+Method:
+ GET
+Parameter
+ headers: {
+    Authorization: `Bearer ${token}`,
+  },
+Digunakan untuk mencegah id user memodfikasi session storage jika user melakukan maka user akan dipaksa logout 
+
+[6] /check
+URL:
+ /auth
+Method:
+ GET
+Parameter
+ headers: {
+    Authorization: `Bearer ${token}`,
+  },
+Digunakan untuk mencegah nama user memodfikasi session storage jika user melakukan maka user akan dipaksa logout 
+
+[7] /add-favorite
+URL:
+ /add-favorit
+Method :
+ POST
+Request Body (JSON)
+  {
+    id_user: --> membutuhkan fetch ke /auth
+    nama_user: --> membutuhkan fetch ke /check
+    id_tempat, ------|
+    nama_tempat, ----|
+    gambar, ---------|
+    kategori, -------|
+    kota, -----------|
+    koordinat, ------|
+    lat, ------------|-------> diambil dari elemen html
+    long, -----------|
+    harga, ----------|
+    rating, ---------|
+    waktu, ----------|
+    deskripsi, ------|
+  }
+
+[8] /favorites/{id_user}
+URL:
+ /favorites/{id_user}
+Method:
+ GET
+Parameter
+ const response = await fetch(
+    `http://localhost:5000/favorites/${idUser}`,
+  );
+
+[9] /textgen
+URL:
+ /textgen
+Method:
+ POST
+Request Body (JSON)
+  {
+    "user_id": "Sofyan",
+    "favorite_place": "Monumen Nasional",    
+  }
+-> Setiap elemen yang membutuhkan textgen harus fetch ke Endpoint ini
+
+[10] /delete-favorite
+URL: 
+ /delete-Favorite
+Method: 
+  DELETE
+Parameter
+{
+  id_user, --> membutuhkan fetch ke /auth
+  nama_user, --> membutuhkan fetch ke /check
+  id_tempat, ----|
+  nama_tempat, --|----Didapat dari elemen html
+}
+
 -- [ 📝 Catatan Tambahan ] --
 - `favorite_place` bisa kosong jika user tidak memilih apapun di Section 2.
 - Jika `favorite_place` kosong, sistem hanya akan menggunakan collaborative filtering.
@@ -91,7 +171,8 @@ file destination.html
   b. Hanya satu lokasi yang bisa dipilih (tidak multi-select)
 
 (Section 3 – ML-Based Recommendations)
-- Menggunakan `user_id` dari session storage (setelah login).
+- Harus fecth ke http://localhost:5000/auth untuk mendapatkan nilai dari session storage `authToken`
+- Menggunakan `authToken` dari session storage.
 - Menampilkan gambar rekomendasi berdasarkan:
   a. Collaborative filtering
   b. Hybrid (Collaborative + Content-Based, jika `favorite_place` ada)
@@ -99,14 +180,16 @@ file destination.html
 file login.html
 - buat codingan seperti ini:
       if (res.ok && data.userId) {
-        sessionStorage.setItem('userId', data.userId);
+          // sessionStorage.setItem('userId', data.userId);
+          sessionStorage.setItem('authTokenNama', data.token_nama);
+          sessionStorage.setItem('authTokenId', data.token_id);
+          window.location.href = 'destination.html';
       }
-  data.userId disini adalah id dari user, ini digunakan untuk Section 3 file destination.html yg memerlukan sebuah id user
 
 
 --- [ Python Environment ] ---
 - Install Dependencies
-pip install fastapi uvicorn pandas numpy tensorflow scikit-learn joblib
+pip install fastapi uvicorn pandas numpy tensorflow scikit-learn joblib transformers sentencepiece
 
 
 --- [ Backend - Cara Menjalankan ] ---
@@ -152,3 +235,42 @@ port: 5432,
     Indexes:
         "users_pkey" PRIMARY KEY, btree (id)
         "unique_nama" UNIQUE CONSTRAINT, btree (nama)
+  7. CREATE TABLE likes (
+        id SERIAL PRIMARY KEY,
+        id_user TEXT NOT NULL,
+        nama_user TEXT NOT NULL,
+        id_tempat TEXT NOT NULL,
+        nama_tempat TEXT NOT NULL,
+        gambar TEXT,
+        kategori TEXT,
+        kota TEXT,
+        koordinat TEXT,
+        lat TEXT,
+        long TEXT,
+        harga TEXT,
+        rating TEXT,
+        waktu TEXT,
+        deskripsi TEXT
+    );
+    --> Membuat tabel likes
+  8. \d likes --> Membuat tabel likes
+                                 Table "public.likes"
+      Column    |  Type   | Collation | Nullable |              Default
+    -------------+---------+-----------+----------+-----------------------------------
+    id          | integer |           | not null | nextval('likes_id_seq'::regclass)
+    id_user     | text    |           | not null |
+    nama_user   | text    |           | not null |
+    id_tempat   | text    |           | not null |
+    nama_tempat | text    |           | not null |
+    gambar      | text    |           |          |
+    kategori    | text    |           |          |
+    kota        | text    |           |          |
+    koordinat   | text    |           |          |
+    lat         | text    |           |          |
+    long        | text    |           |          |
+    harga       | text    |           |          |
+    rating      | text    |           |          |
+    waktu       | text    |           |          |
+    deskripsi   | text    |           |          |
+    Indexes:
+        "likes_pkey" PRIMARY KEY, btree (id)
