@@ -1,6 +1,7 @@
 const {
   getRecommendationHandler,
   searchPlaceHandler,
+  getTextGenerationHandler,
 } = require('./ml_handler');
 const {
   loginHandler,
@@ -53,6 +54,11 @@ const routes = [
     handler: userFavoritePlace,
   },
   {
+    method: 'POST',
+    path: '/textgen',
+    handler: getTextGenerationHandler,
+  },
+  {
     method: 'DELETE',
     path: '/delete-favorite',
     handler: deleteFavoriteHandler,
@@ -66,3 +72,4 @@ const routes = [
 ];
 
 module.exports = routes;
+
