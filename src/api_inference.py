@@ -1,9 +1,12 @@
-# pip install fastapi uvicorn pandas numpy tensorflow scikit-learn joblib
+# TensorFlow & Keras
 import tensorflow as tf
 from tensorflow.keras import layers
 
+# Pandas dan NumPy
 import pandas as pd
 import numpy as np
+
+# Untuk menyimpan dan memuat model atau data
 import joblib
 
 from fastapi import FastAPI, Request  # Tambahkan ini
@@ -72,7 +75,7 @@ cosine_sim_df = joblib.load('models/cosine_sim_df.pkl')
 cb_df = pd.read_csv('data/cb_df.csv')
 
 #Collaborative Filtering
-model = tf.keras.models.load_model(
+model_cf = tf.keras.models.load_model(
     'models/collab_model.keras',
     custom_objects={'RecommenderNet': RecommenderNet}
 )
@@ -133,7 +136,7 @@ def collaborative_filtering_recommendations(user_id, n=5):
     user_place_array = np.array([[user_encoded, p_enc] for p_enc in place_encoded_unvisited])
 
     # Prediksi rating
-    ratings = model.predict(user_place_array).flatten()
+    ratings = model_cf.predict(user_place_array).flatten()
 
     # Ambil top-n rating tertinggi
     top_ratings_indices = ratings.argsort()[-n:][::-1]
@@ -160,7 +163,7 @@ def get_travel_recommendations(user_id, favorite_place=None):
     # 3. Gabungkan dengan dataset utama menggunakan Place_Id
     recommendations_df = destinasi_df[
         destinasi_df['Place_Id'].isin(unique_recommendations)
-    ]
+    ].copy()
 
     # 4. Tambahkan flag sumber rekomendasi
     recommendations_df['Recommendation_Source'] = 'Hybrid'
@@ -193,24 +196,24 @@ def get_travel_recommendations(user_id, favorite_place=None):
 # print("Rekomendasi untuk user baru (tanpa favorite place):")
 # display(new_user_recs)
 
+
+
 #IMPLEMENTASI HANYA BERDASARKAN CONTENT DESTINASINYA DENGAN INPUT KATEGORI NAMA ATAU KOTA
 def infer_cbf_search(query, top_k=10):
     """
-    Fungsi inference Content-Based Filtering berdasarkan kata kunci yang boleh lebih dari satu kata,
-    dicocokkan ke kolom nama tempat, kategori, atau kota secara individual.
+    Fungsi inference Content-Based Filtering dengan hasil merge lengkap dari destinasi_df.
+
+    :param query: Kata kunci pencarian
+    :param top_k: Jumlah rekomendasi
+    :return: List of dict dengan semua fitur destinasi
     """
-    keywords = query.lower().strip().split()
+    query = query.lower().strip()
 
-    # Buat mask boolean awal dengan False
-    mask = pd.Series([False] * len(cb_df))
-
-    for keyword in keywords:
-        mask |= (
-            cb_df['Place_Name'].str.lower().str.contains(keyword) |
-            cb_df['Category'].str.lower().str.contains(keyword) |
-            cb_df['City'].str.lower().str.contains(keyword)
-        )
-
+    mask = (
+        cb_df['Place_Name'].str.lower().str.contains(query) |
+        cb_df['Category'].str.lower().str.contains(query) |
+        cb_df['City'].str.lower().str.contains(query)
+    )
     relevant_places = cb_df[mask]
 
     if relevant_places.empty:
@@ -235,12 +238,61 @@ def infer_cbf_search(query, top_k=10):
     rec_df = rec_df.sort_values('Similarity_Score', ascending=False)
     rec_df = rec_df.drop_duplicates(subset=['Place_Id']).head(top_k)
 
+    # Merge semua fitur dari destinasi_df berdasarkan Place_Id
     merged_df = pd.merge(rec_df, destinasi_df, on='Place_Id', how='left')
 
     return merged_df.to_dict(orient='records')
-# place = "taman sungai mud budya jakrta"
-# hasil = infer_cbf_search(place, top_k=5)
+# hasil = infer_cbf_search("budaya", top_k=5)
 # display(hasil)
+
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+
+# 1. Load model dan tokenizer
+model_dir = "t5-finetuned-recommendation-final"
+tokenizer = T5Tokenizer.from_pretrained(model_dir, legacy=True)
+model = T5ForConditionalGeneration.from_pretrained(model_dir)
+
+# rekom_texts = []
+# for _, row in user_recs.iterrows():
+#     teks = f"{row['Place_Name']} di {row['City']}, kategori {row['Category']}, rating {row['Rating']}"
+#     rekom_texts.append(teks)
+# input_text = "Rekomendasi tempat wisata: " + "; ".join(rekom_texts)
+
+def generate_natural_recommendation(user_id, favorite_place=None, top_n=1):
+    # 1. Ambil rekomendasi DataFrame dari sistem hybrid
+    user_recs = get_travel_recommendations(user_id=user_id, favorite_place=favorite_place)
+
+    if user_recs.empty:
+        return "Tidak ada rekomendasi tersedia untuk user ini."
+
+    # 2. Ambil top-n
+    user_recs = user_recs.head(top_n)
+
+    # 3. Format input text sesuai template yang diinginkan
+    input_template = "User menyukai kategori: {category}; lokasi: {city}; tempat: {place}; rating: {rating}"
+
+    parts = []
+    for _, row in user_recs.iterrows():
+        part = input_template.format(
+            category=row['Category'],
+            city=row['City'],
+            place=row['Place_Name'],
+            rating=row['Rating']
+        )
+        parts.append(part)
+
+    # Gabungkan bagian-bagian dengan separator pipe (atau bisa ganti sesuai kebutuhan)
+    input_text = " ; ".join(parts)
+
+    # 4. Tokenisasi dan generate output dari model T5
+    inputs = tokenizer(input_text, return_tensors="pt", max_length=512, truncation=True)
+    outputs = model.generate(**inputs, max_length=150)
+    result_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    return result_text
+
+# hasil = generate_natural_recommendation(user_id=1,favorite_place="Monumen Nasional")
+# print(hasil)
 
 @app.post("/recommendations")
 async def recommendations(request: Request):
@@ -264,3 +316,26 @@ async def search(request: Request):
     place = body.get("place")
     result = infer_cbf_search(place)
     return {"query": place, "results": result}
+
+@app.post("/textgen")
+async def textgen(request: Request):
+    body = await request.json()
+    user_id = body.get("user_id")
+    favorite_place = body.get("favorite_place")
+
+    try:
+        user_id = int(user_id)
+    except (ValueError, TypeError):
+        return {
+            "user_id": user_id,
+            "gen_text": "User ID tidak valid."
+        }
+
+    # Panggil fungsi generate_natural_recommendation
+    gen_text = generate_natural_recommendation(user_id, favorite_place)
+
+    return {
+        "user_id": user_id,
+        "favorite_place": favorite_place,
+        "gen_text": gen_text
+    }
