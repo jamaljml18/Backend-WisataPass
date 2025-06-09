@@ -21,6 +21,7 @@ const getRecommendationHandler = async (request, h) => {
         status: 'success',
         user_id: data.user_id,
         recommendations: data.recommendations,
+        // gen_text: data.gen_text,
       })
       .code(200);
   } catch (error) {
@@ -37,8 +38,6 @@ const getRecommendationHandler = async (request, h) => {
 // Handler untuk endpoint search
 const searchPlaceHandler = async (request, h) => {
   const { searchInput, category, location } = request.payload;
-
-  // Gabungkan ketiganya menjadi satu string
   const place = `${searchInput} ${category} ${location}`.trim();
 
   try {
@@ -71,7 +70,43 @@ const searchPlaceHandler = async (request, h) => {
   }
 };
 
+// Handler untuk endpoint text generation
+const getTextGenerationHandler = async (request, h) => {
+  const { user_id, favorite_place } = request.payload;
+
+  try {
+    const res = await fetch('http://127.0.0.1:8000/textgen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id, favorite_place }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Gagal melakukan text generation');
+    }
+
+    const data = await res.json();
+    return h
+      .response({
+        status: 'success',
+        user_id: data.user_id,
+        favorite_place: data.favorite_place,
+        gen_text: data.gen_text,
+      })
+      .code(200);
+  } catch (error) {
+    console.error('Error:', error);
+    return h
+      .response({
+        status: 'fail',
+        message: 'Gagal menghasilkan teks rekomendasi',
+      })
+      .code(500);
+  }
+};
+
 module.exports = {
   getRecommendationHandler,
   searchPlaceHandler,
+  getTextGenerationHandler,
 };
